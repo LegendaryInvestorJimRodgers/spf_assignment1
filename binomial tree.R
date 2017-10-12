@@ -1,10 +1,11 @@
 #initial variables:
 s = 100
-u = 1.01
-d = 0.99
+#u = 1.01
+d = 0.95
+t = 15
 RR = 0.05/365
 k = 95
-t = 15
+
 
 ######################################################################################################
 #European Option
@@ -42,18 +43,38 @@ for (i in (ncol(options_price) - 1):1) {
     options_price[j, i] = (q * options_price[j, i + 1] + (1 - q) * options_price[j + 1, i + 1]) / (1 + RR)  
   }
 }
-
-returned_things <- list("V0" = options_price, "stock" = stock_price)
-return(returned_things)
+print(options_price)
+return(options_price[1,1])
 }
+
+#ups = c(1.01, 1.02, 1.05, 1.1)
+ups = seq(1.01,1.5, 0.001)
+#downs = seq(0.5,0.999,0.01)
+call_values = c()
+
+for (u in ups) {
+    call_values =  c(call_values, european(s, u, d, RR, k, t, "P"))
+}
+
+plot(ups,call_values, xlab = "Up Values", ylab = "Call Option Prices", log ="")
+
+
+#p <- plot_ly(x = ups, y = downs, z = call_values) %>% add_surface()
+
+
+#persp(ups, downs, call_values, phi = 45, theta = 45,
+#      xlab = "X Coordinate (feet)", ylab = "Y Coordinate (feet)",
+#      main = "Surface elevation data"
+#)
+
 
 ########################################################################################################
 #Put call parity
 ########################################################################################################
 #print(european(s, u, d, RR, k, t, "C") - european(s, u, d, RR, k, t, "P"))
-stocks = european(s, u, d, RR, k, t, "P")[2]
-call_optionion = european(s, u, d, RR, k, t, "C")[1]
-put_option = european(s, u, d, RR, k, t, "P")[1]
+#stocks = european(s, u, d, RR, k, t, "P")[2]
+#call_optionion = european(s, u, d, RR, k, t, "C")[1]
+#put_option = european(s, u, d, RR, k, t, "P")[1]
 
 #TODO: turn 1 + RR ^ t into an array!
 #parity <- stocks + put_option - call_option - k * (1 + RR)^(t)
